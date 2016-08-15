@@ -95,7 +95,7 @@
 			<scope>import</scope>
 		</dependency>
 
-
+       <!-- necessario no client Desktop tambem para conexao-->
 		<dependency>
 			<groupId>org.wildfly</groupId>
 			<artifactId>wildfly-ejb-client-bom</artifactId>

@@ -4,9 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
+import javax.ejb.Init;
 import javax.ejb.Local;
 import javax.ejb.Remote;
+import javax.ejb.Remove;
 import javax.ejb.Stateless;
 
 import br.com.dex.estacionamento.dao.DAO;
@@ -81,7 +85,26 @@ public class DefaultCRUDBean<T ,I extends Serializable> implements DefaultCRUDBe
 		dao.setClass(classe);
 		return dao.findByMap(values);
 	}
-    
+	
+	@Init
+	public void iniciou(){
+		System.out.println("Bean iniciado");
+	}
+	
+	@PostConstruct
+	public void contruiu(){
+		System.out.println("Bean construido");
+	}
+	
+	@PreDestroy
+    public void destruiu(){
+		System.out.println("Bean destruido");
+	}
+	
+	@Remove
+	public void removido(){
+	  System.out.println("bean removido do pool");
+    }
     
 
 }

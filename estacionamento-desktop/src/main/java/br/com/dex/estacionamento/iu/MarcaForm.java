@@ -13,15 +13,11 @@ import br.com.dex.estacionamento.vo.Marca;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.List;
-
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.ListSelectionModel;
 
 public class MarcaForm {
 

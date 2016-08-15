@@ -1,0 +1,498 @@
+- gerando projeto web
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-webapp -DgroupId=br.com.dex.estacionamento -DartifactId=estacionamento-war
+
+mvn eclipse:eclipse
+
+
+- gerando projeto ejb 
+(apos rodar esse comando crie o diretorio META-INF, veja nomo no projeto blog-ejb)
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=br.com.dex.estacionamento -DartifactId=estacionamento-ejb
+mvn eclipse:eclipse
+
+- gerando o pom pai
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>br.com.dex.estacionamento</groupId>
+  <artifactId>estacionamento</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>estacionamento-ejb</module>
+    <module>estacionamento-war</module>
+    <module>estacionamento-ear</module>
+    <module>estacionamento-desktop</module>
+  </modules>
+  
+</project>
+
+
+mvn eclipse:clean eclipse:eclipse
+
+-- colocando parent nos projetos filhos
+
+	<parent>
+		<groupId>br.com.dex.estacionamento</groupId>
+		<artifactId>estacionamento</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+- pom.xml do projeto ejb
+
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.com.dex.estacionamento</groupId>
+	<artifactId>estacionamento-ejb</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<!-- mudar o pacote para ejb -->	
+	<packaging>ejb</packaging>
+
+	<name>estacionamento-ejb</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>br.com.dex.estacionamento</groupId>
+			<artifactId>estacionamento-lib</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JPA -->
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
+	
+			<!-- <groupId>javax.persistence</groupId> <artifactId>persistence-api</artifactId> 
+			<version>1.0.2</version>
+			<scope>provided</scope> -->
+		</dependency>
+		<!--  <dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.2.0.Final</version>
+			<scope>provided</scope>
+		</dependency> --> 
+
+
+
+		<!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>5.1.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- EJB Api -->
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- JavaEE API 7 -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+		<!--   <dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version> 
+		</dependency> -->
+		<dependency>
+		<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-7.0</artifactId>
+			<version>1.0.1.Final</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+
+       <!-- necessario no client Desktop tambem para conexao-->
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-ejb-client-bom</artifactId>
+			<version>10.0.0.Final</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+	</dependencies>
+	<!-- geracao do ejb e ejb client -->
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<version>2.5.1</version>
+				<configuration>
+					<ejbVersion>3.0</ejbVersion>
+					<!-- isso gerara o arquivo ejb-client.jar removendo os arquivos com 
+						sufixo Bean -->
+					<clientExcludes>
+						<!-- this will exclude all files under com/example -->
+						<clientExclude>br/com/dex/estacionamento/dao/*</clientExclude>
+						<clientExclude>META-INF/persistence.xml</clientExclude>
+					</clientExcludes>
+					<generateClient>true</generateClient>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+	
+
+--- converte o projeto ejb no eclipse
+
+
+--- pom.xml do projeto war
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.com.dex.estacionamento</groupId>
+  <artifactId>estacionamento-war</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>estacionamento-web</name>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+        <!-- se for separar algo do projeto, no caso as entidades estão no package estacionamento-lib -->
+         <dependency>
+			<groupId>br.com.dex.estacionamento</groupId>
+			<artifactId>estacionamento-lib</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+	</dependency>
+	<dependency>
+			<groupId>br.com.dex.estacionamento</groupId>
+			<artifactId>estacionamento-ejb</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>provided</scope>
+	</dependency>
+		<!-- JavaEE API 7 -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- EJB API -->
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- JSF -->
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>javax.faces-api</artifactId>
+			<version>2.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- JSTL -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<!-- somente para compilar, ja temos esses pacotes no container -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+  </dependencies>
+  <build>
+    <finalName>estacionamento-war</finalName>
+<plugins>
+ <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+</plugins>
+  </build>
+</project>
+
+
+
+-- trocar o web.xml por
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee" 
+         xmlns:web="http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee">
+
+</web-app>
+
+ -- alterar o projeto para web 3.1 e jsf 2.2, se necessario alterar o arquivo de configuracao dentro de .properties do projeto eclipse.
+
+-- montar o pom.xml da geracao do EAR
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.com.dex.estacionamento</groupId>
+  <artifactId>estacionamento-ear</artifactId>
+<version>1.0-SNAPSHOT</version>
+  <packaging>ear</packaging>
+  <name>estacionamento-ear</name>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-ear-plugin</artifactId>
+        <configuration>
+          <version>1.4</version>
+          <modules>
+            <webModule>
+              <groupId>br.com.dex.estacionamento</groupId>
+              <artifactId>estacionamento-war</artifactId>
+              <bundleFileName>estacionamento.war</bundleFileName>
+              <contextRoot>/estacionamento</contextRoot>
+            </webModule>
+            <ejbModule>
+              <groupId>br.com.dex.estacionamento</groupId>
+              <artifactId>estacionamento-ejb</artifactId>
+              <bundleFileName>estacionamento-ejb.jar</bundleFileName>
+            </ejbModule>
+          </modules>
+          <displayName>Estacionamento</displayName>
+          <!-- If I want maven to generate the application.xml, set this to true -->
+          <generateApplicationXml>true</generateApplicationXml>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+    <finalName>estacionamento</finalName>
+  </build>
+
+  <!-- Define the versions of your ear components here -->
+  <dependencies>
+    <dependency>
+      <groupId>br.com.dex.estacionamento</groupId>
+      <artifactId>estacionamento-war</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>br.com.dex.estacionamento</groupId>
+      <artifactId>estacionamento-ejb</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+  </dependencies>
+</project>
+
+
+mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=br.com.dex.estacionamento -DartifactId=estacionamento-desktop
+mvn eclipse:eclipse
+
+-- gerar main externo que usa o cliente
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>br.com.estacionamento</groupId>
+	<artifactId>estacionamento-main</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>estacionamento-desktop</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>7.0</version>
+		</dependency>
+		<!-- EJB API -->
+		<dependency>
+			<groupId>javax.ejb</groupId>
+			<artifactId>ejb-api</artifactId>
+			<version>3.0</version>
+		</dependency>
+		<!-- necessario pois xnio 3.2.0 tem bug -->
+		<dependency>
+			<groupId>org.jboss.xnio</groupId>
+			<artifactId>xnio-api</artifactId>
+			<version>3.3.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss</groupId>
+			<artifactId>jboss-ejb-client</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.dex.estacionamento</groupId>
+			<artifactId>estacionamento-ejb</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<type>ejb-client</type>
+		</dependency>
+<!-- necessario para o client -->
+		
+		<dependency>
+			<groupId>org.jboss.spec</groupId>
+			<artifactId>jboss-javaee-7.0</artifactId>
+			<version>1.0.1.Final</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.wildfly</groupId>
+			<artifactId>wildfly-ejb-client-bom</artifactId>
+			<version>10.0.0.Final</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<finalName>estacionamento-desktop</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>br.com.estacionamento.estacionamento_main.App</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+--jndi.properties
+#Para jboss 6
+#java.naming.factory.initial=org.jnp.interfaces.NamingContextFactory
+#java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+#java.naming.provider.url=localhost
+
+#Para EAP e Wildfly no proprio servidor
+javax.naming.context=org.jboss.ejb.client.naming
+remote.connections=default
+remote.connection.default.host=127.0.0.1
+remote.connection.default.port=8080
+#remote.connection.default.connect.options.org.xnio.Options.SASL_POLICY_NOANONYMOUS=false
+#remote.connection.default.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT=false
+#remote.connection.default.connect.options.org.xnio.Options.SASL_DISALLOWED_MECHANISMS=${host.auth:JBOSS-LOCAL-USER}
+  
+#remote.connection.default.username=${username}
+#remote.connection.default.password=${password}
+
+#Para EAP e Wildfly mais indicado (em client externo)
+#endpoint.name=client-endpoint
+#remote.connectionprovider.create.options.org.xnio.Options.SSL_ENABLED=false
+#java.naming.factory.initial=org.jboss.naming.remote.client.InitialContextFactory
+#jboss.naming.client.ejb.context=true
+#javax.naming.context=org.jboss.ejb.client.naming
+#java.naming.provider.url=http-remoting://127.0.0.1:8080
+#jboss.naming.client.connect.options.org.xnio.Options.SASL_POLICY_NOPLAINTEXT=false
+#java.naming.security.principal=teste
+#java.naming.security.credentials=teste@123
