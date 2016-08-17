@@ -8,6 +8,9 @@
         <dependent-module archiveName="estacionamento-ejb.jar" deploy-path="/" handle="module:/resource/estacionamento-ejb/estacionamento-ejb">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="estacionamento-lib.jar" deploy-path="/lib" handle="module:/resource/estacionamento-lib/estacionamento-lib">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="jdom2-2.0.5.jar" deploy-path="/lib" handle="module:/classpath/var/M2_REPO/org/jdom/jdom2/2.0.5/jdom2-2.0.5.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>

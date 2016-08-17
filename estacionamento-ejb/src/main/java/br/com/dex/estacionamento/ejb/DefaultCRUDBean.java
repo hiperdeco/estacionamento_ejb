@@ -27,6 +27,8 @@ public class DefaultCRUDBean<T ,I extends Serializable> implements DefaultCRUDBe
 	
 	@EJB
 	DAO<T, I> dao;
+	
+	private int cont= 0;
     /**
      * Default constructor. 
      */
@@ -38,6 +40,8 @@ public class DefaultCRUDBean<T ,I extends Serializable> implements DefaultCRUDBe
 	public List<T> findAll(Class<T> classe ) {
 		this.classe = classe;
 		System.out.println("procurando tudo da classe" + classe.getSimpleName());
+		System.out.println("cont: " + cont);
+		cont++;
 		dao.setClass(classe);
 		return dao.findAll();
 	}

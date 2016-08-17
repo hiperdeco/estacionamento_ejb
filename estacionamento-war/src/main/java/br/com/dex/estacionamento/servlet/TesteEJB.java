@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.dex.estacionamento.dao.DAOManager;
 import br.com.dex.estacionamento.ejb.DefaultCRUDBeanLocal;
+import br.com.dex.estacionamento.ejb.TesteStateFulBeanLocal;
+import br.com.dex.estacionamento.ejb.TesteStateFulBeanRemote;
 import br.com.dex.estacionamento.vo.Marca;
 
 /**
@@ -23,6 +26,13 @@ public class TesteEJB extends HttpServlet {
        
 	@EJB
 	private DefaultCRUDBeanLocal<Marca,Long> local;
+	
+	private TesteStateFulBeanRemote local2;
+	
+	private TesteStateFulBeanRemote local3;
+	
+	@EJB
+	private TesteStateFulBeanLocal local4;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -36,10 +46,18 @@ public class TesteEJB extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {
-			local = (DefaultCRUDBeanLocal<Marca,Long>) InitialContext.doLookup("java:app/estacionamento-ejb/DefaultCRUDBean!br.com.dex.estacionamento.ejb.bean.DefaultCRUDBeanLocal");
-			local.findAll(Marca.class);
+		
+		InitialContext ctx = null;
+		try{
+			ctx = new InitialContext();
 			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		try {
+			local = (DefaultCRUDBeanLocal<Marca,Long>) InitialContext.doLookup("java:app/estacionamento-ejb/DefaultCRUDBean!br.com.dex.estacionamento.ejb.DefaultCRUDBeanLocal");
+			local.findAll(Marca.class);
+			local.findAll(Marca.class);
 			if (request.getParameter("incluir")!= null){
 				Marca m = new Marca();
 				m.setDescricao(request.getParameter("incluir"));
@@ -51,6 +69,32 @@ public class TesteEJB extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			local2 = (TesteStateFulBeanRemote) ctx.lookup("ejb:estacionamento/estacionamento-ejb/TesteStateFulBean!br.com.dex.estacionamento.ejb.TesteStateFulBeanRemote?stateful");
+			local2.teste();
+			local3 = (TesteStateFulBeanRemote) ctx.lookup("ejb:estacionamento/estacionamento-ejb/TesteStateFulBean!br.com.dex.estacionamento.ejb.TesteStateFulBeanRemote?stateful");
+			local3.teste();
+			
+			local3.teste();
+			local2.teste();
+			
+			System.out.println("Bean local");
+			local4.teste();
+			local4.teste();
+				
+		} catch (NamingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try{
+			DAOManager.getInstance().find(Marca.class, 1);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 	/**
