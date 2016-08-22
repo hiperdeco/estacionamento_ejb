@@ -1,11 +1,12 @@
 package br.com.dex.estacionamento.dao;
 
 import javax.annotation.Resource;
+import javax.ejb.EJBContext;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 import javax.transaction.HeuristicMixedException;
@@ -15,22 +16,25 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import br.com.dex.estacionamento.constants.DAOConstants;
-
-
+@Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 public class DAOManager {
 	
 	@Resource
 	UserTransaction userTx;
 	
-	@PersistenceContext
+	@PersistenceUnit
 	EntityManagerFactory emf;
+	//@PersistenceContext
+	//EntityManager em;
+	
+	//@Resource
+	//EJBContext context;
 	
 	private static DAOManager _instance;
 	
 	
-	private DAOManager(){
+	public DAOManager(){
 		
 	}
 	
@@ -52,7 +56,8 @@ public class DAOManager {
 	}
 
 	public void find(Class<?> objeto, Object value){
-		EntityManager em = getEntityManager();
+		EntityManager em = emf.createEntityManager();
+		//userTx = context.getUserTransaction();
 		try {
 			userTx.begin();
 			em.find(objeto, value);

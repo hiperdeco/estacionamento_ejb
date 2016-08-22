@@ -17,16 +17,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceContextType;
 import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import br.com.dex.estacionamento.ejb.DAORemote;
+
 import java.util.Map;
 
-@Stateless
-@TransactionManagement(TransactionManagementType.BEAN)
-public class DAOImpl<T, I extends Serializable> implements DAO<T, I> {
+@Stateful
+@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+public class DAOImpl<T, I extends Serializable> implements DAO<T, I>,DAORemote<T, I> {
    
-	@PersistenceContext
+	@PersistenceContext(synchronization=SynchronizationType.SYNCHRONIZED, type=PersistenceContextType.EXTENDED)
 	private EntityManager em;
 	private Class<T> classe;
 
@@ -37,7 +40,7 @@ public class DAOImpl<T, I extends Serializable> implements DAO<T, I> {
 		this.classe = classe;
 	}
     
-	public void setClass(Class classe){
+	public void setClass(Class<T> classe){
 		this.classe = classe;
 	}
 	
@@ -60,7 +63,7 @@ public class DAOImpl<T, I extends Serializable> implements DAO<T, I> {
 		return retorno;
 	}
 	
-    @Transactional
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
 	public void insert(T objeto) {
 		//getEntityManager().getTransaction().begin();
 		getEntityManager().persist(objeto);

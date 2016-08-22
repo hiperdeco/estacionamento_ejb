@@ -7,27 +7,30 @@ import java.util.Map;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import br.com.dex.estacionamento.ejb.DAORemote;
 import br.com.dex.estacionamento.ejb.DefaultCRUDBeanRemote;
 
 public class Controle<T ,I extends Serializable> {
 	
 	private static InitialContext ctx;
+	DAORemote<T,I> dao = null;
 	
 	private Class<T> classe;
 	public Controle(Class<T> classe){
 		this.classe = classe;
+		System.out.println("instanciou denovo");
 	}
 	
 	public T findBydId(I chave){
-		return getCRUD().findById(classe, chave);
+		return getCRUD().findById( chave);
 	}
 	
 	public List<T> findAll(){
-		return getCRUD().findAll(classe);
+		return getCRUD().findAll();
 	}
 	
 	public List<T> findByDesc(String description){
-		return getCRUD().findByDesc(description,classe);
+		return getCRUD().findByDesc(description);
 	}
 	
 	public void insert(T objeto){
@@ -50,18 +53,20 @@ public class Controle<T ,I extends Serializable> {
 				values.put(chave, item);
 			}
 		}
-		return getCRUD().findByMap(values,this.classe);
+		return getCRUD().findByMap(values);
 	}
 	
-	private DefaultCRUDBeanRemote<T, I> getCRUD(){
-		try {
-			ctx = new InitialContext();
-			return (DefaultCRUDBeanRemote<T, I>) ctx.doLookup("java:estacionamento/estacionamento-ejb/DefaultCRUDBean!br.com.dex.estacionamento.ejb.DefaultCRUDBeanRemote");
-		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	private DAORemote<T, I> getCRUD(){
+		if (dao == null){
+			try {
+				ctx = new InitialContext();
+				dao =  (DAORemote<T, I>) ctx.doLookup("java:estacionamento/estacionamento-ejb/DAOImpl!br.com.dex.estacionamento.ejb.DAORemote");
+				dao.setClass(classe);
+			} catch (NamingException e) {
+				e.printStackTrace();
+			}
 		}
-		return null;
+		return dao;
 	}
 		
 }

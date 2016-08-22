@@ -5,6 +5,7 @@ import javax.ejb.BeforeCompletion;
 import javax.ejb.PostActivate;
 import javax.ejb.PrePassivate;
 import javax.ejb.Remote;
+import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
@@ -44,6 +45,10 @@ public class TesteStateFulBean implements TesteStateFulBeanRemote, TesteStateFul
 		
 	}
 	
+	public void incluir(Object objeto){
+		em.persist(objeto);
+	}
+	
 	@PrePassivate
 	public void ativo(){
 		System.out.println("ativou  pre-passivate");
@@ -62,6 +67,11 @@ public class TesteStateFulBean implements TesteStateFulBeanRemote, TesteStateFul
 	@AfterCompletion
 	public void afterCompletion(boolean commited){
 		System.out.println("ativou o afterCompletion" + commited);
+	}
+	
+	@Remove
+	public void removeu(){
+		System.out.println("ativou o remove");
 	}
 
 }
