@@ -1,0 +1,35 @@
+h1,h2,h3,h4,h5,h6 {
+	color: #056495
+}
+
+.ui-widget {
+	font-family: Arial, sans-serif;
+	font-size: 90% !important;
+}
+
+.ui-button {
+	margin-left: 10px;
+}
+
+.margem-superior {
+	margin-top: 20px;
+}
+
+.margin-bottom {
+	margin-bottom: 10px;
+}
+
+.app-buttons {
+	text-align: right;
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+
+.sem-bordas {
+	border: none;
+}
+
+.alinhar-esquerda {
+	text-align: left;
+	margin-left: 20px;
+}
