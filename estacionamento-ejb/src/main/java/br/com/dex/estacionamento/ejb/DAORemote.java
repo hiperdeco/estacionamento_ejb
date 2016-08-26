@@ -16,7 +16,11 @@ public interface DAORemote<T ,I extends Serializable> {
 	public void update(T objeto);
 	public void delete(T objeto);
 	public List<T> findByMap(Map<String,Object> values);
+<<<<<<< HEAD
 	public void setClass(Class classe);
+=======
+	public void setClass(Class<T> classe);
+>>>>>>> d08b89f354ddc34222bf6afe982a089b10bcbcc7
 		
 	
 }

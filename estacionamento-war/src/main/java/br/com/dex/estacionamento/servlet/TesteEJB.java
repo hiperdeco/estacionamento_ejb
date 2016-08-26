@@ -27,12 +27,18 @@ public class TesteEJB extends HttpServlet {
 	@EJB
 	private DefaultCRUDBeanLocal<Marca,Long> local;
 	
+	@EJB
+	private DefaultCRUDBeanLocal<Marca,Long> local1;
+	
 	private TesteStateFulBeanRemote local2;
 	
 	private TesteStateFulBeanRemote local3;
 	
 	@EJB
 	private TesteStateFulBeanLocal local4;
+	
+	@EJB
+	private DAOManager mgr;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -57,7 +63,11 @@ public class TesteEJB extends HttpServlet {
 		try {
 			local = (DefaultCRUDBeanLocal<Marca,Long>) InitialContext.doLookup("java:app/estacionamento-ejb/DefaultCRUDBean!br.com.dex.estacionamento.ejb.DefaultCRUDBeanLocal");
 			local.findAll(Marca.class);
+			local1 = (DefaultCRUDBeanLocal<Marca,Long>) InitialContext.doLookup("java:app/estacionamento-ejb/DefaultCRUDBean!br.com.dex.estacionamento.ejb.DefaultCRUDBeanLocal");
+			local1.findAll(Marca.class);
+			System.out.println("verificar valor do stateless");
 			local.findAll(Marca.class);
+			local1.findAll(Marca.class);
 			if (request.getParameter("incluir")!= null){
 				Marca m = new Marca();
 				m.setDescricao(request.getParameter("incluir"));
@@ -71,11 +81,14 @@ public class TesteEJB extends HttpServlet {
 		}
 		
 		try {
+			
+			System.out.println("stateful");
 			local2 = (TesteStateFulBeanRemote) ctx.lookup("ejb:estacionamento/estacionamento-ejb/TesteStateFulBean!br.com.dex.estacionamento.ejb.TesteStateFulBeanRemote?stateful");
 			local2.teste();
 			local3 = (TesteStateFulBeanRemote) ctx.lookup("ejb:estacionamento/estacionamento-ejb/TesteStateFulBean!br.com.dex.estacionamento.ejb.TesteStateFulBeanRemote?stateful");
 			local3.teste();
 			
+			System.out.println("verificar valor do stateful");
 			local3.teste();
 			local2.teste();
 			
@@ -89,7 +102,8 @@ public class TesteEJB extends HttpServlet {
 		}
 		
 		try{
-			DAOManager.getInstance().find(Marca.class, 1);
+			System.out.println("UserTransaction");
+			mgr.find(Marca.class, 1);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

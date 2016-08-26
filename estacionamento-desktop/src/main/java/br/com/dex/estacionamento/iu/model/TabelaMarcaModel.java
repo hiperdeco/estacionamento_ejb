@@ -18,6 +18,7 @@ implements ActionListener, TableModelListener {
 
 	List<String> colunas = new ArrayList<String>();
 	List<Marca> linhas = new ArrayList<Marca>();
+	Controle<Marca, Integer> controle = null;
 	
 	public TabelaMarcaModel(){
 		colunas.add("ID");
@@ -63,7 +64,7 @@ implements ActionListener, TableModelListener {
 	
 	public void insert(Marca item){
 		System.out.println("Enviado: " + item);
-		new Controle<Marca, Integer>(Marca.class).insert(item);
+		getControle().insert(item);
 		System.out.println("Recebido: " + item);
 		linhas.add(item);
 		fireTableDataChanged();
@@ -83,7 +84,7 @@ implements ActionListener, TableModelListener {
 	
 	public void getLines(Marca filter) throws Exception{
 		Controle<Marca, Integer> controle2 = 
-				new Controle<Marca, Integer>(Marca.class);
+				getControle();
 		
 		if (filter != null && ! filter.getDescricao().trim().isEmpty()){
 			this.linhas = controle2.findByDesc(filter.getDescricao());
@@ -96,9 +97,16 @@ implements ActionListener, TableModelListener {
 	
 	public void alterar(Marca item){
 		Controle<Marca, Integer> controle2 = 
-				new Controle<Marca, Integer>(Marca.class);
+				getControle();
 		controle2.update(item);
 		fireTableDataChanged();
+	}
+	
+	private Controle<Marca,Integer> getControle(){
+		if (controle == null){
+			controle = new Controle<Marca, Integer>(Marca.class);
+		}
+		return controle;
 	}
 
 }

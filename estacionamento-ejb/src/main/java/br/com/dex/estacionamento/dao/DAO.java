@@ -17,7 +17,7 @@ public interface DAO<T ,I extends Serializable> {
 	public void update(T objeto);
 	public void delete(T objeto);
 	public List<T> findByMap(Map<String,Object> values);
-	public void setClass(Class classe);
+	public void setClass(Class<T> classe);
 		
 	
 }

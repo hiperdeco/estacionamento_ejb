@@ -47,8 +47,8 @@ public class DefaultCRUDBean<T ,I extends Serializable> implements DefaultCRUDBe
 	}
    
 	public void incluir(T objeto) {
-		this.classe = (Class<T>) objeto.getClass();
-		dao.setClass(objeto.getClass());
+		this.classe = (Class<T>) classe;
+		dao.setClass(classe);
 		dao.insert(objeto);
 		
 	}
@@ -67,20 +67,20 @@ public class DefaultCRUDBean<T ,I extends Serializable> implements DefaultCRUDBe
 
 
 	public void insert(T objeto) {
-		dao.setClass(objeto.getClass());
+		dao.setClass(classe);
 		dao.insert(objeto);
 	}
 
 
 	public void update(T objeto) {
-		dao.setClass(objeto.getClass());
+		dao.setClass(classe);
 		dao.update(objeto);
 		
 	}
 
 
 	public void delete(T objeto) {
-		dao.setClass(objeto.getClass());
+		dao.setClass(classe);
 		dao.delete(objeto);
 		
 	}
